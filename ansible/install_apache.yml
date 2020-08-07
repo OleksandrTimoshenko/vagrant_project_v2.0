@@ -1,0 +1,26 @@
+---
+- name: Install apache
+  hosts: all
+  become: true
+
+  tasks:
+  - name: Install httpd
+    yum:
+      name: httpd
+      state: present
+
+  - name: Create index.html file
+    command: touch  /var/www/html/index.html
+
+  - name: Write hostname to index.html file
+    lineinfile:
+      dest: /var/www/html/index.html
+      regexp: ^Hostname=.*
+      insertafter: ^# Hostname=
+      line: Host {{ ansible_hostname }}
+
+
+  - name: Start Apache
+    service:
+      name: httpd
+      state: started 
